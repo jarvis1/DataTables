@@ -4379,9 +4379,10 @@
 		/**
 		 * Save the state of a table in a cookie such that the page can be reloaded
 		 *  @param {object} oSettings dataTables settings object
+     *  @param {sCalledFrom} Where the save state was called from
 		 *  @memberof DataTable#oApi
 		 */
-		function _fnSaveState ( oSettings )
+		function _fnSaveState ( oSettings, sCalledFrom )
 		{
 			if ( !oSettings.oFeatures.bStateSave || oSettings.bDestroying )
 			{
@@ -4408,7 +4409,7 @@
 		
 			_fnCallbackFire( oSettings, "aoStateSaveParams", 'stateSaveParams', [oSettings, oState] );
 			
-			oSettings.fnStateSave.call( oSettings.oInstance, oSettings, oState );
+			oSettings.fnStateSave.call( oSettings.oInstance, oSettings, oState, sCalledFrom );
 		}
 		
 		
@@ -6049,7 +6050,7 @@
 				_fnDraw( oSettings );
 			}
 			
-			_fnSaveState( oSettings );
+			_fnSaveState( oSettings, "fnSetColumnVis" );
 		};
 		
 		
@@ -8907,6 +8908,7 @@
 		 *  @member
 		 *  @param {object} oSettings DataTables settings object
 		 *  @param {object} oData The state object to be saved
+		 *  @param {string} sCalledFrom Where the state save was called from
 		 *  @dtopt Callbacks
 		 * 
 		 *  @example
@@ -8926,7 +8928,7 @@
 		 *      } );
 		 *    } );
 		 */
-		"fnStateSave": function ( oSettings, oData ) {
+		"fnStateSave": function ( oSettings, oData, sCalledFrom ) {
 			this.oApi._fnCreateCookie( 
 				oSettings.sCookiePrefix+oSettings.sInstance, 
 				this.oApi._fnJsonString(oData), 
